@@ -1,14 +1,9 @@
 package com.postpc.nimrod.postpcmultithreading;
 
-import android.content.Context;
-import android.content.Intent;
-
 import static com.postpc.nimrod.postpcmultithreading.threading.ThreadingActivity.ASYNC_MODE;
 import static com.postpc.nimrod.postpcmultithreading.threading.ThreadingActivity.THREAD_MODE;
 
 class MainPresenter implements MainContract.Presenter{
-
-
 
     private final MainContract.View view;
 

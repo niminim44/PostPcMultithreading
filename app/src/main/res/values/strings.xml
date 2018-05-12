@@ -2,4 +2,11 @@
     <string name="app_name">PostPcMultithreading</string>
     <string name="asynctask_activity">AsyncTask Activity</string>
     <string name="threads_activity">Threads Activity</string>
+    <string name="create_string">Create</string>
+    <string name="start_string">Start</string>
+    <string name="cancel_string">Cancel</string>
+    <string name="async_task_created">Async Task Created!</string>
+    <string name="task_canceled">Task Cancelled</string>
+    <string name="create_a_task">Create a task please</string>
+    <string name="task_finished">Task Finished!</string>
 </resources>
