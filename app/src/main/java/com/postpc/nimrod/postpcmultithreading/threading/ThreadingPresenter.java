@@ -1,6 +1,9 @@
 package com.postpc.nimrod.postpcmultithreading.threading;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
 
 import com.postpc.nimrod.postpcmultithreading.R;
 
@@ -10,6 +13,11 @@ class ThreadingPresenter implements ThreadingContract.Presenter{
     private final Bundle extras;
     private int activityMode;
     private TimerAsyncTask asyncTask;
+    private Thread threadTask;
+    private Handler doOnUIThread;
+    private int time;
+    private boolean isThreadRunning;
+    private boolean isCancelled = false;
 
     ThreadingPresenter(ThreadingContract.View view, Bundle extras) {
         this.view = view;
@@ -82,9 +90,13 @@ class ThreadingPresenter implements ThreadingContract.Presenter{
                 cancelAsyncTask();
                 break;
             case ThreadingActivity.THREAD_MODE:
-                // TODO: 12/05/2018 implement this
+                cancelThread();
                 break;
         }
+    }
+
+    private void cancelThread() {
+        isCancelled = true;
     }
 
     private void cancelAsyncTask() {
@@ -101,8 +113,17 @@ class ThreadingPresenter implements ThreadingContract.Presenter{
                 startAsyncTask();
                 break;
             case ThreadingActivity.THREAD_MODE:
-                // TODO: 12/05/2018 implement this
+                startThreadTask();
                 break;
+        }
+    }
+
+    private void startThreadTask() {
+        view.setTextViewBackgroundColor(R.color.orange);
+        setButtonsEnabled(false, false, true);
+        if(!isThreadRunning){
+            isThreadRunning = true;
+            threadTask.start();
         }
     }
 
@@ -124,7 +145,40 @@ class ThreadingPresenter implements ThreadingContract.Presenter{
     }
 
     private void createThreadTask() {
-        // TODO: 12/05/2018 implement this
+        this.doOnUIThread = new Handler(Looper.getMainLooper());
+        this.threadTask = new Thread(() -> {
+            time = 10;
+            while(time > 0 && !isCancelled){
+                doOnUIThread.post(() -> updateProgress(time));
+                SystemClock.sleep(1000);
+                time--;
+            }
+            doOnUIThread.post((isCancelled) ? this::threadTakCancelled : this::threadTaskFinished);
+        });
+        view.setCurrentState(R.string.thread_task_created);
+        view.setTextViewBackgroundColor(R.color.yellow);
+        setButtonsEnabled(false, true, false);
+    }
+
+    private void threadTakCancelled() {
+        initThreadTask();
+        view.setCurrentState(R.string.task_canceled);
+        view.setTextViewBackgroundColor(R.color.red);
+        setButtonsEnabled(true, false, false);
+    }
+
+    private void threadTaskFinished() {
+        initThreadTask();
+        view.setCurrentState(R.string.task_finished);
+        view.setTextViewBackgroundColor(R.color.green);
+        setButtonsEnabled(true, false, false);
+    }
+
+    private void initThreadTask(){
+        isThreadRunning = false;
+        isCancelled = false;
+        time = 0;
+        threadTask = null;
     }
 
     private void createAsyncTask() {

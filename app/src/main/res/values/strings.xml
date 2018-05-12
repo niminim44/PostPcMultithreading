@@ -9,4 +9,5 @@
     <string name="task_canceled">Task Cancelled</string>
     <string name="create_a_task">Create a task please</string>
     <string name="task_finished">Task Finished!</string>
+    <string name="thread_task_created">Thread task created</string>
 </resources>
